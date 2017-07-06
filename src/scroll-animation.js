@@ -54,7 +54,7 @@ export default class ScrollAnimation extends Component {
       var that = this;
       if (visible.partially) {
         var timeout = setTimeout(function() {
-          that.setState({classes: classes, style: style, lastVisibility: visible});
+          that.setState({classes: classes, style: style, lastVisibility: visible,hasAnimated: true,animateOnce:true});
         }, this.props.delay);
         var timeouts = this.state.timeouts.slice()
         timeouts.push(timeout);
@@ -89,11 +89,11 @@ export default class ScrollAnimation extends Component {
 
   getStyle(visible) {
     var style = {"animationDuration": this.props.duration + "s"};
-    if (!visible.partially && !this.props.initiallyVisible) {
+    if (!visible.partially && !this.props.initiallyVisible && !this.state.hasAnimated && !this.state.animateOnce) {
       style.visibility = "hidden";
     } else if (!visible.completely &&
                 visible.partially &&
-                !this.state.lastVisibility.partially && !this.props.initiallyVisible) {
+                !this.state.lastVisibility.partially && !this.props.initiallyVisible && !this.state.hasAnimated && !this.state.animateOnce) {
       style.visibility = "hidden";
     }
     return style;
@@ -101,9 +101,9 @@ export default class ScrollAnimation extends Component {
 
   getClasses(visible) {
     var classes = "animated";
-    if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut)) {
+    if ((visible.completely && this.props.animateIn) || (visible.partially && this.state.classes.includes(this.props.animateIn) && !this.props.animateOut) && !this.state.hasAnimated && !this.state.animateOnce) {
       classes += " " + this.props.animateIn;
-    } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut) {
+    } else if (visible.partially && this.state.lastVisibility.completely && this.props.animateOut && !this.state.hasAnimated && !this.state.animateOnce) {
       classes += " " + this.props.animateOut;
     }
     return classes;
